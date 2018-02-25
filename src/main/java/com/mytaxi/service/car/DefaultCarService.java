@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.mytaxi.controller.mapper.CarMapper;
 import com.mytaxi.dataaccessobject.CarRepository;
+import com.mytaxi.dataaccessobject.DriverRepository;
 import com.mytaxi.dataaccessobject.ManufacturerRepository;
 import com.mytaxi.datatransferobject.CarDTO;
 import com.mytaxi.domainobject.CarDO;
@@ -28,29 +29,30 @@ public class DefaultCarService implements CarService
     private static org.slf4j.Logger LOG = LoggerFactory.getLogger(DefaultCarService.class);
 
     private final CarRepository carRepository;
+    private final DriverRepository driverRepository;
     private final ManufacturerRepository manufacturerRepository;
 
 
-    public DefaultCarService(final CarRepository carRepository, final ManufacturerRepository manufacturerRepository)
+    public DefaultCarService(final CarRepository carRepository, final ManufacturerRepository manufacturerRepository, final DriverRepository driverRepository)
     {
         this.carRepository = carRepository;
+        this.driverRepository = driverRepository;
         this.manufacturerRepository = manufacturerRepository;
     }
 
 
-//    /**
-//     * Selects a car by id.
-//     *
-//     * @param carId
-//     * @return found car
-//     * @throws EntityNotFoundException if no car with the given id was found.
-//     */
-//    @Override
-//    private CarDO find(Long carId) throws EntityNotFoundException
-//    {
-//        return findCarChecked(carId);
-//    }
-
+    //    /**
+    //     * Selects a car by id.
+    //     *
+    //     * @param carId
+    //     * @return found car
+    //     * @throws EntityNotFoundException if no car with the given id was found.
+    //     */
+    //    @Override
+    //    private CarDO find(Long carId) throws EntityNotFoundException
+    //    {
+    //        return findCarChecked(carId);
+    //    }
 
     /**
      * Creates a new car.
@@ -59,10 +61,10 @@ public class DefaultCarService implements CarService
      * @return
      * @throws ConstraintsViolationException if a car already exists with the given username, ... .
      */
-//    @Override
+    //    @Override
     private CarDO create(CarDTO carDTO) throws ConstraintsViolationException
     {
-        CarDO car = CarMapper.makeCarDO(carDTO, manufacturerRepository);
+        CarDO car = CarMapper.makeCarDO(carDTO, manufacturerRepository, driverRepository);
         try
         {
             car = carRepository.save(car);

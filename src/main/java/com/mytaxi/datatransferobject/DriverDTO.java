@@ -1,5 +1,7 @@
 package com.mytaxi.datatransferobject;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,18 +23,20 @@ public class DriverDTO
 
     private GeoCoordinate coordinate;
 
+    private Long selectedCar;
+
 
     private DriverDTO()
-    {
-    }
+    {}
 
 
-    private DriverDTO(Long id, String username, String password, GeoCoordinate coordinate)
+    private DriverDTO(Long id, String username, String password, GeoCoordinate coordinate, Long selectedCar)
     {
         this.id = id;
         this.username = username;
         this.password = password;
         this.coordinate = coordinate;
+        this.selectedCar = selectedCar;
     }
 
 
@@ -66,12 +70,19 @@ public class DriverDTO
         return coordinate;
     }
 
+
+    public Long getSelectedcar()
+    {
+        return selectedCar;
+    }
+
     public static class DriverDTOBuilder
     {
         private Long id;
         private String username;
         private String password;
         private GeoCoordinate coordinate;
+        private Long selectedCar;
 
 
         public DriverDTOBuilder setId(Long id)
@@ -102,9 +113,16 @@ public class DriverDTO
         }
 
 
+        public DriverDTOBuilder setSelectedCar(Long selectedCar)
+        {
+            this.selectedCar = selectedCar;
+            return this;
+        }
+
+
         public DriverDTO createDriverDTO()
         {
-            return new DriverDTO(id, username, password, coordinate);
+            return new DriverDTO(id, username, password, coordinate, selectedCar);
         }
 
     }

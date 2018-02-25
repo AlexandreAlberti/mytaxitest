@@ -25,6 +25,7 @@ import com.mytaxi.domainvalue.EngineType;
 import com.mytaxi.exception.ConstraintsViolationException;
 import com.mytaxi.exception.EntityNotFoundException;
 import com.mytaxi.service.car.CarService;
+import com.mytaxi.service.driver.DriverService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = MytaxiServerApplicantTestApplication.class)
@@ -36,6 +37,8 @@ public class MytaxiServerApplicantTestApplicationTests
 
     @Autowired
     private CarService carService;
+    @Autowired
+    private DriverService driverService;
 
 
     //    @Test
@@ -501,6 +504,140 @@ public class MytaxiServerApplicantTestApplicationTests
         catch (EntityNotFoundException e)
         {
             assertTrue("CAR's ID " + carId + " DOES NOT EXIST", false);
+        }
+    }
+
+
+    @Test
+    public void selectingCars()
+    {
+        // SELECTING CAR 1 for Driver 4
+        try
+        {
+            assertTrue(driverService.selectCar(4L, 1L));
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+        // SELECTION OK
+        try
+        {
+            assertEquals(1L, driverService.find(4L).getSelectedCar().getId().longValue());
+            assertEquals(4L, carService.findDTO(1L).getDriverId().longValue());
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+
+        // SELECTING CAR 2 for Driver 5
+        try
+        {
+            assertTrue(driverService.selectCar(5L, 2L));
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+        // SELECTION OK
+        try
+        {
+            assertEquals(2L, driverService.find(5L).getSelectedCar().getId().longValue());
+            assertEquals(5L, carService.findDTO(2L).getDriverId().longValue());
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+
+        // DESELECTION PART
+        try
+        {
+            assertFalse(driverService.deselectCar(5L, 1L)); // NOT HAD SELECTED THIS CAR BEFORE
+            assertTrue(driverService.deselectCar(5L, 2L)); // OK 
+            assertFalse(driverService.deselectCar(5L, 2L)); // ALREADY DESELECTED
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+
+        try
+        {
+            assertFalse(driverService.deselectCar(4L, 2L)); // NOT HAD SELECTED THIS CAR BEFORE
+            assertTrue(driverService.deselectCar(4L, 1L)); // OK 
+            assertFalse(driverService.deselectCar(4L, 1L)); // ALREADY DESELECTED
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+
+    }
+
+
+    @Test // TODO: TO BE CHANGED AT TASK 2
+    public void selectingCarsOverlapping()
+    {
+        // SELECTING CAR 2 for Driver 4
+        try
+        {
+            assertTrue(driverService.selectCar(4L, 2L));
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+        // SELECTION OK
+        try
+        {
+            assertEquals(2L, driverService.find(4L).getSelectedCar().getId().longValue());
+            assertEquals(4L, carService.findDTO(2L).getDriverId().longValue());
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+
+        // SELECTING CAR 2 for Driver 5
+        try
+        {
+            assertTrue(driverService.selectCar(5L, 2L));
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+        // SELECTION OK
+        try
+        {
+            assertEquals(2L, driverService.find(5L).getSelectedCar().getId().longValue());
+            assertEquals(5L, carService.findDTO(2L).getDriverId().longValue());
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+
+        // DRIVER 4 HAS NO CAR SELECTED
+        try
+        {
+            assertNull(driverService.find(4L).getSelectedCar());
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+
+        // DESELECTION PART
+        try
+        {
+            assertTrue(driverService.deselectCar(5L, 2L)); // OK 
+        }
+        catch (EntityNotFoundException e)
+        {
+            assertTrue(e.getMessage(), false);
         }
     }
 

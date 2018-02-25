@@ -10,6 +10,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Min;
@@ -36,7 +37,8 @@ public class CarDO
 
     @Column(nullable = false, name = "SEAT_COUNT")
     @NotNull(message = "Number of seats can not be null!")
-    @Min(value = 2) // For the driver and, at lesast, 1 passenger
+    @Min(value = 2)
+    // For the driver and, at lesast, 1 passenger
     private Integer seatCount;
 
     @Column(nullable = true)
@@ -54,15 +56,20 @@ public class CarDO
     @JoinColumn(nullable = true, name = "MANUFACTURER_ID")
     private ManufacturerDO manufacturer;
 
+    @OneToOne
+    @JoinColumn(nullable = true, name = "DRIVER_ID")
+    private DriverDO driver;
+
     @Column(nullable = false)
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private ZonedDateTime dateCreated = ZonedDateTime.now();
+
 
     private CarDO()
     {}
 
 
-    public CarDO(Long id, String licensePlate, Integer seatCount, Boolean convertible, Float rating, EngineType engineType, ManufacturerDO manufacturer)
+    public CarDO(Long id, String licensePlate, Integer seatCount, Boolean convertible, Float rating, EngineType engineType, ManufacturerDO manufacturer, DriverDO driver)
     {
         super();
         this.id = id;
@@ -72,6 +79,7 @@ public class CarDO
         this.rating = rating;
         this.engineType = engineType;
         this.manufacturer = manufacturer;
+        this.driver = driver;
     }
 
 
@@ -114,6 +122,18 @@ public class CarDO
     public ManufacturerDO getManufacturer()
     {
         return manufacturer;
+    }
+
+
+    public DriverDO getDriver()
+    {
+        return driver;
+    }
+
+
+    public void setDriver(DriverDO driver)
+    {
+        this.driver = driver;
     }
 
 }

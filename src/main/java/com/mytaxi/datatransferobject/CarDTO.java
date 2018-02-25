@@ -26,6 +26,7 @@ public class CarDTO
     private EngineType engineType;
 
     private Long manufacturerId;
+    private Long driverId;
     private String manufacturerName;
 
 
@@ -33,7 +34,8 @@ public class CarDTO
     {}
 
 
-    private CarDTO(Long id, String licensePlate, Integer seatCount, Boolean convertible, Float rating, EngineType engineType, Long manufacturerId, String manufacturerName)
+    private CarDTO(
+        Long id, String licensePlate, Integer seatCount, Boolean convertible, Float rating, EngineType engineType, Long manufacturerId, Long driverId, String manufacturerName)
     {
         super();
         this.id = id;
@@ -43,6 +45,7 @@ public class CarDTO
         this.rating = rating;
         this.engineType = engineType;
         this.manufacturerId = manufacturerId;
+        this.driverId = driverId;
         this.manufacturerName = manufacturerName;
     }
 
@@ -95,6 +98,12 @@ public class CarDTO
     }
 
 
+    public Long getDriverId()
+    {
+        return driverId;
+    }
+
+
     public String getManufacturerName()
     {
         return manufacturerName;
@@ -109,6 +118,7 @@ public class CarDTO
         private Float rating = 0.0F;
         private EngineType engineType;
         private Long manufacturerId;
+        private Long driverId;
         private String manufacturerName;
 
 
@@ -161,6 +171,13 @@ public class CarDTO
         }
 
 
+        public CarDTOBuilder setDriverId(Long driverId)
+        {
+            this.driverId = driverId;
+            return this;
+        }
+
+
         public CarDTOBuilder setManufacturerName(String manufacturerName)
         {
             this.manufacturerName = manufacturerName;
@@ -170,7 +187,7 @@ public class CarDTO
 
         public CarDTO createCarDTO()
         {
-            return new CarDTO(id, licensePlate, seatCount, convertible, rating, engineType, manufacturerId, manufacturerName);
+            return new CarDTO(id, licensePlate, seatCount, convertible, rating, engineType, manufacturerId, driverId, manufacturerName);
         }
 
     }
@@ -215,6 +232,12 @@ public class CarDTO
             sb.append(", ");
             sb.append("\"manufacturerId\":");
             sb.append(manufacturerId);
+        }
+        if (driverId != null)
+        {
+            sb.append(", ");
+            sb.append("\"driverId\":");
+            sb.append(driverId);
         }
         sb.append("}");
         return sb.toString();

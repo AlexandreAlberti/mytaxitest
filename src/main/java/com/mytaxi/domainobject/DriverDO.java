@@ -1,6 +1,7 @@
 package com.mytaxi.domainobject;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -9,6 +10,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -21,8 +23,7 @@ import com.mytaxi.domainvalue.OnlineStatus;
 @Entity
 @Table(
     name = "driver",
-    uniqueConstraints = @UniqueConstraint(name = "uc_username", columnNames = {"username"})
-)
+    uniqueConstraints = @UniqueConstraint(name = "uc_username", columnNames = {"username"}))
 public class DriverDO
 {
 
@@ -56,10 +57,12 @@ public class DriverDO
     @Column(nullable = false)
     private OnlineStatus onlineStatus;
 
+    @OneToOne(mappedBy = "driver")
+    private CarDO selectedCar;
+
 
     private DriverDO()
-    {
-    }
+    {}
 
 
     public DriverDO(String username, String password)
@@ -131,6 +134,18 @@ public class DriverDO
     {
         this.coordinate = coordinate;
         this.dateCoordinateUpdated = ZonedDateTime.now();
+    }
+
+
+    public CarDO getSelectedCar()
+    {
+        return selectedCar;
+    }
+
+
+    public void setSelectedCar(CarDO selectedCar)
+    {
+        this.selectedCar = selectedCar;
     }
 
 }
