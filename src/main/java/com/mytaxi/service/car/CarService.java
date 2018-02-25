@@ -20,13 +20,7 @@ public interface CarService
     void delete(Long carId) throws EntityNotFoundException;
 
 
-    List<CarDO> findByEngineType(EngineType onlineStatus);
-
-
-    List<CarDO> findByManufacturerId(Long manufacturerId);
-
-
-    List<CarDO> findAll();
+    List<CarDO> findAll(Boolean convertible, EngineType eType, String licensePlate, Long manufacturerId, Integer seatCount);
 
 
     CarDTO updateFromDTO(CarDTO carDTO) throws ConstraintsViolationException, EntityNotFoundException;

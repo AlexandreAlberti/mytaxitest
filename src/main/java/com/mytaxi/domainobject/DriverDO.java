@@ -1,7 +1,6 @@
 package com.mytaxi.domainobject;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Embedded;

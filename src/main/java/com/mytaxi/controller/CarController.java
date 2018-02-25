@@ -73,20 +73,10 @@ public class CarController
 
 
     @GetMapping
-    public List<CarDTO> findCars(@RequestParam(required = false) EngineType engineType, @RequestParam(required = false) Long manufacturerId)
-        throws ConstraintsViolationException, EntityNotFoundException
+    public List<CarDTO> findCars(
+        @RequestParam(required = false) Boolean convertible, @RequestParam(required = false) EngineType engineType, @RequestParam(required = false) String licensePlate, @RequestParam(
+            required = false) Long manufacturerId, @RequestParam(required = false) Integer seatCount) throws ConstraintsViolationException, EntityNotFoundException
     {
-        if (engineType != null)
-        {
-            return CarMapper.makeCarDTOList(carService.findByEngineType(engineType));
-        }
-        else if (manufacturerId != null)
-        {
-            return CarMapper.makeCarDTOList(carService.findByManufacturerId(manufacturerId));
-        }
-        else
-        {
-            return CarMapper.makeCarDTOList(carService.findAll());
-        }
+        return CarMapper.makeCarDTOList(carService.findAll(convertible, engineType, licensePlate, manufacturerId, seatCount));
     }
 }

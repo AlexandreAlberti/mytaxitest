@@ -17,6 +17,11 @@ import com.mytaxi.domainobject.CarDO;
 import com.mytaxi.domainvalue.EngineType;
 import com.mytaxi.exception.ConstraintsViolationException;
 import com.mytaxi.exception.EntityNotFoundException;
+import com.mytaxi.service.car.criteria.CarCriteriaFilterConvertible;
+import com.mytaxi.service.car.criteria.CarCriteriaFilterEngineType;
+import com.mytaxi.service.car.criteria.CarCriteriaFilterLicensePlate;
+import com.mytaxi.service.car.criteria.CarCriteriaFilterManufacturer;
+import com.mytaxi.service.car.criteria.CarCriteriaFilterSeats;
 
 /**
  * Service to encapsulate the link between DAO and controller and to have business logic for some car specific things.
@@ -98,39 +103,63 @@ public class DefaultCarService implements CarService
     }
 
 
-    /**
-     * Find all cars by engine type.
-     *
-     * @param engineType
-     */
-    @Override
-    public List<CarDO> findByEngineType(EngineType engineType)
-    {
-        return carRepository.findByEngineType(engineType);
-    }
-
-
-    /**
-     * Find all cars by manufacturer id.
-     *
-     * @param manufacturerId
-     */
-    @Override
-    public List<CarDO> findByManufacturerId(Long manufacturerId)
-    {
-        return carRepository.findByManufacturer_Id(manufacturerId);
-    }
-
+    //    /**
+    //     * Find all cars by engine type.
+    //     *
+    //     * @param engineType
+    //     */
+    //    @Override
+    //    public List<CarDO> findByEngineType(EngineType engineType)
+    //    {
+    //        return carRepository.findByEngineType(engineType);
+    //    }
+    //
+    //
+    //    /**
+    //     * Find all cars by manufacturer id.
+    //     *
+    //     * @param manufacturerId
+    //     */
+    //    @Override
+    //    public List<CarDO> findByManufacturerId(Long manufacturerId)
+    //    {
+    //        return carRepository.findByManufacturer_Id(manufacturerId);
+    //    }
 
     /**
      * Find all cars.
+     * This pattern may not be the fastest at first sight, taking into account that the car database may be incredibly large. 
+     * Using cache techniques, you may get easily all records in much less time, than asking lots of query's. 
+     * Bottle neck may be on Memory/CPU, rather than DB for this case. 
      */
     @Override
-    public List<CarDO> findAll()
+    public List<CarDO> findAll(Boolean convertible, EngineType eType, String licensePlate, Long manufacturerId, Integer seatCount)
     {
         Iterable<CarDO> findAll = carRepository.findAll();
         List<CarDO> result = new ArrayList<>();
         findAll.forEach(result::add);
+
+        if (convertible != null)
+        {
+            result = new CarCriteriaFilterConvertible().meetCriteria(result, convertible);
+        }
+        if (eType != null)
+        {
+            result = new CarCriteriaFilterEngineType().meetCriteria(result, eType);
+        }
+        if (licensePlate != null)
+        {
+            result = new CarCriteriaFilterLicensePlate().meetCriteria(result, licensePlate);
+        }
+        if (manufacturerId != null)
+        {
+            result = new CarCriteriaFilterManufacturer().meetCriteria(result, manufacturerId);
+        }
+        if (seatCount != null)
+        {
+            result = new CarCriteriaFilterSeats().meetCriteria(result, seatCount);
+        }
+
         return result;
     }
 
