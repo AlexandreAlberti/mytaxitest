@@ -1,14 +1,9 @@
 package com.mytaxi.controller;
 
-import com.mytaxi.controller.mapper.DriverMapper;
-import com.mytaxi.datatransferobject.DriverDTO;
-import com.mytaxi.domainobject.DriverDO;
-import com.mytaxi.domainvalue.OnlineStatus;
-import com.mytaxi.exception.ConstraintsViolationException;
-import com.mytaxi.exception.EntityNotFoundException;
-import com.mytaxi.service.driver.DriverService;
 import java.util.List;
+
 import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -21,6 +16,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.mytaxi.controller.mapper.DriverMapper;
+import com.mytaxi.datatransferobject.DriverDTO;
+import com.mytaxi.domainobject.DriverDO;
+import com.mytaxi.domainvalue.OnlineStatus;
+import com.mytaxi.exception.ConstraintsViolationException;
+import com.mytaxi.exception.EntityNotFoundException;
+import com.mytaxi.service.driver.DriverService;
 
 /**
  * All operations with a driver will be routed by this controller.

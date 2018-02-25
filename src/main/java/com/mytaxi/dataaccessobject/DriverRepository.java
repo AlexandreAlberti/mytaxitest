@@ -1,9 +1,11 @@
 package com.mytaxi.dataaccessobject;
 
+import java.util.List;
+
+import org.springframework.data.repository.CrudRepository;
+
 import com.mytaxi.domainobject.DriverDO;
 import com.mytaxi.domainvalue.OnlineStatus;
-import java.util.List;
-import org.springframework.data.repository.CrudRepository;
 
 /**
  * Database Access Object for driver table.
