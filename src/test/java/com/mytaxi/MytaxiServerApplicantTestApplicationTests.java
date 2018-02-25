@@ -22,6 +22,8 @@ import org.springframework.web.client.RestTemplate;
 
 import com.mytaxi.datatransferobject.CarDTO;
 import com.mytaxi.domainvalue.EngineType;
+import com.mytaxi.domainvalue.OnlineStatus;
+import com.mytaxi.exception.CarAlreadyInUseException;
 import com.mytaxi.exception.ConstraintsViolationException;
 import com.mytaxi.exception.EntityNotFoundException;
 import com.mytaxi.service.car.CarService;
@@ -516,7 +518,7 @@ public class MytaxiServerApplicantTestApplicationTests
         {
             assertTrue(driverService.selectCar(4L, 1L));
         }
-        catch (EntityNotFoundException e)
+        catch (EntityNotFoundException | CarAlreadyInUseException e)
         {
             assertTrue(e.getMessage(), false);
         }
@@ -536,7 +538,7 @@ public class MytaxiServerApplicantTestApplicationTests
         {
             assertTrue(driverService.selectCar(5L, 2L));
         }
-        catch (EntityNotFoundException e)
+        catch (EntityNotFoundException | CarAlreadyInUseException e)
         {
             assertTrue(e.getMessage(), false);
         }
@@ -577,15 +579,29 @@ public class MytaxiServerApplicantTestApplicationTests
     }
 
 
-    @Test // TODO: TO BE CHANGED AT TASK 2
+    @Test
     public void selectingCarsOverlapping()
     {
+        // SELECTING CAR 1 for Driver Offline
+        try
+        {
+            driverService.selectCar(driverService.find(OnlineStatus.OFFLINE).get(0).getId(), 2L);
+        }
+        catch (EntityNotFoundException  e)
+        {
+            assertTrue("This driver is not online, so it can't select a car" , true);
+        }
+        catch (CarAlreadyInUseException e)
+        {
+            assertTrue(e.getMessage(), false);
+        }
+
         // SELECTING CAR 2 for Driver 4
         try
         {
             assertTrue(driverService.selectCar(4L, 2L));
         }
-        catch (EntityNotFoundException e)
+        catch (EntityNotFoundException | CarAlreadyInUseException e)
         {
             assertTrue(e.getMessage(), false);
         }
@@ -603,27 +619,23 @@ public class MytaxiServerApplicantTestApplicationTests
         // SELECTING CAR 2 for Driver 5
         try
         {
-            assertTrue(driverService.selectCar(5L, 2L));
+            driverService.selectCar(5L, 2L);
+            assertTrue("Car is already selected, should not be able to be reselected", false);
         }
         catch (EntityNotFoundException e)
         {
             assertTrue(e.getMessage(), false);
         }
-        // SELECTION OK
-        try
+        catch (CarAlreadyInUseException e)
         {
-            assertEquals(2L, driverService.find(5L).getSelectedCar().getId().longValue());
-            assertEquals(5L, carService.findDTO(2L).getDriverId().longValue());
-        }
-        catch (EntityNotFoundException e)
-        {
-            assertTrue(e.getMessage(), false);
+            assertTrue("Car is already selected", true);
         }
 
-        // DRIVER 4 HAS NO CAR SELECTED
+        // DRIVER 5 HAS NO CAR SELECTED AND CAR 2 STILL BELONGS TO DRIVER 4
         try
         {
-            assertNull(driverService.find(4L).getSelectedCar());
+            assertNull(driverService.find(5L).getSelectedCar());
+            assertEquals(4L, carService.findDTO(2L).getDriverId().longValue());
         }
         catch (EntityNotFoundException e)
         {
@@ -633,7 +645,7 @@ public class MytaxiServerApplicantTestApplicationTests
         // DESELECTION PART
         try
         {
-            assertTrue(driverService.deselectCar(5L, 2L)); // OK 
+            assertTrue(driverService.deselectCar(4L, 2L)); // OK 
         }
         catch (EntityNotFoundException e)
         {

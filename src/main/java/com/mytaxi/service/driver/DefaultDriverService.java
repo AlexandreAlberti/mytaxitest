@@ -13,6 +13,7 @@ import com.mytaxi.domainobject.CarDO;
 import com.mytaxi.domainobject.DriverDO;
 import com.mytaxi.domainvalue.GeoCoordinate;
 import com.mytaxi.domainvalue.OnlineStatus;
+import com.mytaxi.exception.CarAlreadyInUseException;
 import com.mytaxi.exception.ConstraintsViolationException;
 import com.mytaxi.exception.EntityNotFoundException;
 
@@ -131,15 +132,27 @@ public class DefaultDriverService implements DriverService
 
 
     @Override
-    public boolean selectCar(long driverId, long carId) throws EntityNotFoundException
+    public boolean selectCar(long driverId, long carId) throws EntityNotFoundException, CarAlreadyInUseException
     {
-        DriverDO driverDO = driverRepository.findOne(driverId);
+        DriverDO driverDO = driverRepository.findByIdAndOnlineStatus(driverId, OnlineStatus.ONLINE);
         if (driverDO == null)
         {
-            throw new EntityNotFoundException("Could not find driver with id: " + driverId);
+            throw new EntityNotFoundException("Could not find ONLINE driver with id: " + driverId);
         }
+
+        // GET THE CAR
+        CarDO carDO = carRepository.findOne(carId);
+        if (carDO == null)
+        {
+            throw new EntityNotFoundException("Could not find car with id: " + carId);
+        }
+        if (carDO.getDriver() != null && !carDO.getDriver().getId().equals(driverId))
+        {
+            throw new CarAlreadyInUseException("Car is selected by driver with id: " + carDO.getDriver().getId() + " while your id is " + driverId);
+        }
+
         if (driverDO.getSelectedCar() != null)
-        { 
+        {
             // ALREADY WITH A CAR
             CarDO c = driverDO.getSelectedCar();
             if (c.getId().equals(carId))
@@ -161,12 +174,6 @@ public class DefaultDriverService implements DriverService
                     return false;
                 }
             }
-        }
-        // GET THE CAR
-        CarDO carDO = carRepository.findOne(carId);
-        if (carDO == null)
-        {
-            throw new EntityNotFoundException("Could not find car with id: " + carId);
         }
         // PUT THE NEW DRIVER 
         carDO.setDriver(driverDO);
@@ -196,7 +203,7 @@ public class DefaultDriverService implements DriverService
 
         if (driverDO.getSelectedCar() != null)
         {
-            
+
             CarDO c = driverDO.getSelectedCar();
             // IF THE SELECTED CAR IS THE ONE WE SAID TO DESELECT
             if (c.getId().equals(carId))
